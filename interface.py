@@ -128,6 +128,17 @@ class Application(Frame):
 
     def StartRace(self):
         print("Starting the Race...")
+        ids.append("000" + (str)(len(ids) + 1))
+
+        global nbrsOfRows
+        nbrsOfRows = len(max(ids, times, key=len))
+
+        self.refresh()
+
+    def refresh(self):
+        for widget in self.winfo_children():
+            widget.destroy()
+        self.create_widgets()
 
 root = Tk()
 root.title('RacePi Interface')
