@@ -6,7 +6,7 @@ import os
 
 BROKER_ADDRESS = "localhost"
 PORT = 1883
-TOPIC_NAME = "racepi/course"
+TOPIC_NAME = "racepi/race"
 GET_HISTORY = "racepi/get_historique"
 HISTORY = "racepi/historique"
 
@@ -18,7 +18,7 @@ def on_connect(client, userdata, flags, rc):
     else:
         print(f"[ERREUR] Échec de connexion. Code retour : {rc}")
 
-def on_message(cliet, userdata, msg):
+def on_message(client, userdata, msg):
     donne_recue = (msg.payload.decode("utf-8"))
     print(f"[Historique] Reçu sur {msg.topic} :")
     donne_recue = json.loads(donne_recue)
@@ -47,28 +47,28 @@ try:
             if choix == '1':
                 id = input("\nSaisir nom du pilote/voiture : ")
 
-                capteur1 = input("C1 : appuyez une touche")
+                c1 = input("C1 : appuyez une touche")
                 heure_depart = time.strftime('%H:%M')
                 depart = time.monotonic()
-                capteur1 = str(timedelta(seconds=(time.monotonic() - depart))).split(':')[1] + ":" + str(timedelta(seconds=(time.monotonic() - depart))).split(':')[2]
+                c1 = str(timedelta(seconds=(time.monotonic() - depart))).split(':')[1] + ":" + str(timedelta(seconds=(time.monotonic() - depart))).split(':')[2]
 
-                capteur2 = input("C2 : appuyez une touche")
-                capteur2 = str(timedelta(seconds=(time.monotonic() - depart))).split(':')[1] + ":" + str(timedelta(seconds=(time.monotonic() - depart))).split(':')[2]
+                c2 = input("C2 : appuyez une touche")
+                c2 = str(timedelta(seconds=(time.monotonic() - depart))).split(':')[1] + ":" + str(timedelta(seconds=(time.monotonic() - depart))).split(':')[2]
 
-                capteur3 = input("C3 : appuyez une touche")
-                capteur3 = str(timedelta(seconds=(time.monotonic() - depart))).split(':')[1] + ":" + str(timedelta(seconds=(time.monotonic() - depart))).split(':')[2]
+                c3 = input("C3 : appuyez une touche")
+                c3 = str(timedelta(seconds=(time.monotonic() - depart))).split(':')[1] + ":" + str(timedelta(seconds=(time.monotonic() - depart))).split(':')[2]
 
-                capteur4 = input("C4 : appuyez une touche")
-                capteur4 = str(timedelta(seconds=(time.monotonic() - depart))).split(':')[1] + ":" + str(timedelta(seconds=(time.monotonic() - depart))).split(':')[2]
+                c4 = input("C4 : appuyez une touche")
+                c4 = str(timedelta(seconds=(time.monotonic() - depart))).split(':')[1] + ":" + str(timedelta(seconds=(time.monotonic() - depart))).split(':')[2]
             elif choix == '2':
                 id = "Bot"
                 heure_depart = "12:00"
-                capteur1 = "01:03.345014"
-                capteur2 = "03:64.230482"
-                capteur3 = "06:01.023948"
-                capteur4 = "08:12.043651"
-            test_course = {"id":id,"c1":capteur1,"c2":capteur2,"c3":capteur3,"c4":capteur4,"heure":heure_depart}
-            message = f"(COURSE # {cpt}) {test_course}"
+                c1 = "01:03.345014"
+                c2 = "03:64.230482"
+                c3 = "06:01.023948"
+                c4 = "08:12.043651"
+            test_course = '{\"id\": \"' + id + '\",\"c1\": \"' + c1 + '\",\"c2\": \"' + c2 + '\",\"c3\": \"' + c3 + '\",\"c4\": \"' + c4 + '\",\"heure\": \"' + heure_depart+ '\"}'
+            message = test_course
 
             client.publish(TOPIC_NAME, message)
             print(f"[PUBLISH] {message}")

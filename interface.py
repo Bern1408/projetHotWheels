@@ -1,16 +1,46 @@
 from tkinter import *
 from tkinter import Misc
 from typing import Any, Literal
+import json
+import paho.mqtt.client as mqtt
 
 from RaceStat import RaceStat
 
-stats = [
-    RaceStat("1", "10:25:11", "Fini", "12:12:12", "12:45:25", "13:45:25", "14:45:25"),
-    RaceStat("2", "9:15:52", "Fini", "16:55:45", "12:45:25", "13:45:25", "14:45:25"),
-    RaceStat("3", "8:45:68", "Fini", "15:36:36", "12:45:25", "13:45:25", "14:45:25"),
-    RaceStat("4", "9:55:46", "Fini", "12:43:52", "12:45:25", "13:45:25", "14:45:25"),
-    RaceStat("5", "10:15:12", "Fini", "15:27:13", "12:45:25", "13:45:25", "14:45:25")
-    ]
+BROKER_ADDRESS = "localhost"
+PORT = 1883
+
+TOPIC_RACE_RESULTS = "racepi/results" 
+
+stats = []
+
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print(f"[INFO] Connexion réussie au Broker ({BROKER_ADDRESS})")
+        client.subscribe(TOPIC_RACE_RESULTS)
+        print(F"[INFO] Abonnement au topic : {TOPIC_RACE_RESULTS}\n")
+    else:
+        print(f"[ERREUR] Échec de connexion. Code retour : {rc}")
+
+def on_message(client, userdata, msg):
+    donne_recue = msg.payload.decode("utf-8")
+    donne_recue = json.loads(donne_recue)
+    race = RaceStat(donne_recue["id"], donne_recue["heure"], "Fini", donne_recue["c1"], donne_recue["c2"], donne_recue["c3"], donne_recue["c4"])
+    stats.append(race)
+    for stat in stats:
+        print(stat.toString())
+
+def mqttConnect():
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+    try:
+        client.connect(BROKER_ADDRESS, PORT)
+        print(f"Connecté au Broker. Envoi sur le topic : {TOPIC_RACE_RESULTS}")
+
+        client.loop_start()
+    except KeyboardInterrupt:
+        print("\n[STOP] Déconnexion du client...")
+        client.disconnect()
 
 nbrsOfRows = len(stats)
 print(nbrsOfRows)
@@ -20,6 +50,8 @@ class Application(Frame):
         super(Application, self).__init__(master)
         self.grid()
         self.create_widgets()
+
+        mqttConnect()
 
     def create_widgets(self):
         ## Titre du tableau
@@ -118,6 +150,10 @@ class Application(Frame):
         self.startBtn = Button(self, text="Démarrer la course", command=self.StartRace)
         self.startBtn.grid(row=(nbrsOfRows + 2), column=2, sticky="nsew")
 
+    ## Bouton refresh
+        self.refreshBtn = Button(self, text="Refresh", command=self.refresh)
+        self.refreshBtn.grid(row=(nbrsOfRows + 2), column=3, sticky="nsew")
+
     def print(self, message):
         self.printSpace.config(text=message)
 
@@ -127,6 +163,11 @@ class Application(Frame):
             print(stat.toString())
 
     def refresh(self):
+        global stats
+        global nbrsOfRows
+
+        nbrsOfRows = len(stats)
+        print(nbrsOfRows)
         for widget in self.winfo_children():
             widget.destroy()
         self.create_widgets()
