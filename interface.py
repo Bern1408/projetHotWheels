@@ -2,22 +2,17 @@ from tkinter import *
 from tkinter import Misc
 from typing import Any, Literal
 
-ids = ["0001", "0002", "0003", "0004", "0005", "0006", "0007"]
+from RaceStat import RaceStat
 
-times = ["10:45:25", "11:25:36", "11:25:45", "11:34:22", "12:52:53", "13:54:23"]
+stats = [
+    RaceStat("1", "10:25:11", "Fini", "12:12:12", "12:45:25", "13:45:25", "14:45:25"),
+    RaceStat("2", "9:15:52", "Fini", "16:55:45", "12:45:25", "13:45:25", "14:45:25"),
+    RaceStat("3", "8:45:68", "Fini", "15:36:36", "12:45:25", "13:45:25", "14:45:25"),
+    RaceStat("4", "9:55:46", "Fini", "12:43:52", "12:45:25", "13:45:25", "14:45:25"),
+    RaceStat("5", "10:15:12", "Fini", "15:27:13", "12:45:25", "13:45:25", "14:45:25")
+    ]
 
-## Sois "Fini", "Faux départ" ou "Incomplet"
-states = ["Fini", "Faux départ", "Incomplet", "Fini", "Incomplet", "Fini"]
-
-c1Times = ["11:45:25", "12:25:36", "12:25:45", "12:34:22", "13:52:53", "14:54:23"]
-
-c2Times = ["12:45:25", "13:25:36", "13:25:45", "13:34:22", "14:52:53", "15:54:23"]
-
-c3Times = ["13:45:25", "14:25:36", "14:25:45", "14:34:22", "15:52:53", "16:54:23"]
-
-c4Times = ["14:45:25", "15:25:36", "15:25:45", "15:34:22", "16:52:53", "17:54:23"]
-
-nbrsOfRows = len(max(ids, times, key=len))
+nbrsOfRows = len(stats)
 print(nbrsOfRows)
 
 class Application(Frame):
@@ -37,8 +32,8 @@ class Application(Frame):
         self.id.grid(row=1, column=1, sticky="nsew")
     ## Id rows
         for i in range(nbrsOfRows):
-            if i < len(ids):
-                self.idRow = Label(self, text=ids[i], bd=1, relief="solid")
+            if i < len(stats):
+                self.idRow = Label(self, text=stats[i].id, bd=1, relief="solid")
             else:
                 self.idRow = Label(self, text="", bd=1, relief="solid")
             self.idRow.grid(row=(2 + i), column=1, sticky="nsew")
@@ -49,8 +44,8 @@ class Application(Frame):
         self.heure_depart.grid(row=1, column=2, sticky="nsew")
     ## Heure départ rows
         for i in range(nbrsOfRows):
-            if i < len(times):
-                self.heure_departRow = Label(self, text=times[i], bd=1, relief="solid")
+            if i < len(stats):
+                self.heure_departRow = Label(self, text=stats[i].time, bd=1, relief="solid")
             else:
                 self.heure_departRow = Label(self, text="", bd=1, relief="solid")
             self.heure_departRow.grid(row=(2 + i), column=2, sticky="nsew")
@@ -61,8 +56,8 @@ class Application(Frame):
         self.state.grid(row=1, column=3, sticky="nsew")
     ## État rows
         for i in range(nbrsOfRows):
-            if i < len(states):
-                self.stateRow = Label(self, text=states[i], bd=1, relief="solid")
+            if i < len(stats):
+                self.stateRow = Label(self, text=stats[i].state, bd=1, relief="solid")
             else:
                 self.stateRow = Label(self, text="", bd=1, relief="solid")
             self.stateRow.grid(row=(2 + i), column=3, sticky="nsew")
@@ -73,8 +68,8 @@ class Application(Frame):
         self.c1.grid(row=1, column=4, sticky="nsew")
     ## Capteur 1 rows
         for i in range(nbrsOfRows):
-            if i < len(c1Times):
-                self.c1TimeRow = Label(self, text=c1Times[i], bd=1, relief="solid")
+            if i < len(stats):
+                self.c1TimeRow = Label(self, text=stats[i].c1, bd=1, relief="solid")
             else:
                 self.c1TimeRow = Label(self, text="", bd=1, relief="solid")
             self.c1TimeRow.grid(row=(2 + i), column=4, sticky="nsew")
@@ -84,8 +79,8 @@ class Application(Frame):
         self.c2.grid(row=1, column=5, sticky="nsew")
     ## Capteur 2 rows
         for i in range(nbrsOfRows):
-            if i < len(c2Times):
-                self.c2TimeRow = Label(self, text=c2Times[i], bd=1, relief="solid")
+            if i < len(stats):
+                self.c2TimeRow = Label(self, text=stats[i].c2, bd=1, relief="solid")
             else:
                 self.c2TimeRow = Label(self, text="", bd=1, relief="solid")
             self.c2TimeRow.grid(row=(2 + i), column=5, sticky="nsew")
@@ -96,8 +91,8 @@ class Application(Frame):
         self.c3.grid(row=1, column=6, sticky="nsew")
     ## Capteur 3 rows
         for i in range(nbrsOfRows):
-            if i < len(c3Times):
-                self.c3TimeRow = Label(self, text=c3Times[i], bd=1, relief="solid")
+            if i < len(stats):
+                self.c3TimeRow = Label(self, text=stats[i].c3, bd=1, relief="solid")
             else:
                 self.c3TimeRow = Label(self, text="", bd=1, relief="solid")
             self.c3TimeRow.grid(row=(2 + i), column=6, sticky="nsew")
@@ -108,8 +103,8 @@ class Application(Frame):
         self.c4.grid(row=1, column=7, sticky="nsew")
     ## Capteur 4 rows
         for i in range(nbrsOfRows):
-            if i < len(c4Times):
-                self.c4TimeRow = Label(self, text=c4Times[i], bd=1, relief="solid")
+            if i < len(stats):
+                self.c4TimeRow = Label(self, text=stats[i].c4, bd=1, relief="solid")
             else:
                 self.c4TimeRow = Label(self, text="", bd=1, relief="solid")
             self.c4TimeRow.grid(row=(2 + i), column=7, sticky="nsew")
@@ -128,12 +123,8 @@ class Application(Frame):
 
     def StartRace(self):
         print("Starting the Race...")
-        ids.append("000" + (str)(len(ids) + 1))
-
-        global nbrsOfRows
-        nbrsOfRows = len(max(ids, times, key=len))
-
-        self.refresh()
+        for stat in stats:
+            print(stat.toString())
 
     def refresh(self):
         for widget in self.winfo_children():
