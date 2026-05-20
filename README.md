@@ -1,4 +1,5 @@
 ﻿# Projet Intégrateur - RacePi
+### Auteurs: Bernardo Gonçalves da Cruz et Alexandre Doe-Langevin
 ## Lien pour gitHub
 https://github.com/Bern1408/projetHotWheels
 
