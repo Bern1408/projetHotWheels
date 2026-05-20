@@ -2,37 +2,46 @@ import paho.mqtt.client as mqtt
 
 BROKER_ADDRESS = "localhost"
 PORT = 1883
-TOPIC_NAME = "racepi/course"
-GET_HISTORY = "racepi/get_historique"
-SEND_HISTORY = "racepi/historique"
 
-historique_courses = []
+TOPIC_COURSE = "racepi/course"    #Topic qui reçoit les informations d'une course
+TOPIC_GET_HISTORY = "racepi/get_historique" #Topic de démande de historique
+TOPIC_SEND_HISTORY = "racepi/historique"  #Topic d'evoi d'historique
 
+historique_courses = [] #Array qui enregistre les informations des courses
+
+#Fonction de connexion MQTT
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print(f"[INFO] Connexion réussie au Broker ({BROKER_ADDRESS})")
-        client.subscribe(TOPIC_NAME)
-        client.subscribe(GET_HISTORY)
-        print(F"[INFO] Abonnement aux topics : {TOPIC_NAME} et {GET_HISTORY}")
+        client.subscribe(TOPIC_COURSE)
+        client.subscribe(TOPIC_GET_HISTORY)
+        print(F"[INFO] Abonnement aux topics : {TOPIC_COURSE} et {TOPIC_GET_HISTORY}")
     else:
         print(f"[ERREUR] Échec de connexion. Code retour : {rc}")
 
+#Fonction de gestion des messages reçues
 def on_message(cliet, userdata, msg):
     donne_recue = msg.payload.decode("utf-8")
     
-    if msg.topic == GET_HISTORY:
-        client.publish(SEND_HISTORY, str(historique_courses))
+    #Démande de historique
+    if msg.topic == TOPIC_GET_HISTORY:
+        client.publish(TOPIC_SEND_HISTORY, str(historique_courses))
         print(f"[PUBLISH] Historique")
-    elif msg.topic == TOPIC_NAME:
+
+    #Données de course
+    elif msg.topic == TOPIC_COURSE:
         historique_courses.append(donne_recue)
         print(f"[MESSAGE] Reçu sur {msg.topic} -> {donne_recue}")
 
+#Initialisation du client MQTT
 client = mqtt.Client()
 
+#Configuration du client
 client.on_connect = on_connect
 client.on_message = on_message
 
+#Connexion avec le client MQTT
 client.connect(BROKER_ADDRESS, PORT)
 
 print("--- Démarrage du Subscriber (Attente de données...) ---")
-client.loop_forever()
+client.loop_forever()   #Loop qui garde le client en constant état d'attente de données
